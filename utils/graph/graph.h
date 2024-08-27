@@ -31,7 +31,7 @@ struct GraphStruct {
 	}
 
 	// Function that saves to file the contents of the current graph
-	void graphPrinter() {
+	void graphWriter() {
 		char path[] = "../../testing/graph.txt";
 		FILE *fptr;
 
