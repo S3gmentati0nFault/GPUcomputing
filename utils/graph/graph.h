@@ -32,11 +32,14 @@ struct GraphStruct {
 
 	// Function that saves to file the contents of the current graph
 	void graphWriter() {
-		char path[] = "../../testing/graph.txt";
+		char path[] = "/content/testing/graph.txt";
 		FILE *fptr;
 
 		// Open the file in writing mode
 		fptr = fopen(path, "w");
+		if(!fptr) {
+			printf("There was an error while opening the file\n");
+		}
 
 		// Write down the size of the graph
 		fprintf(fptr, "%d\n", nodeSize);
