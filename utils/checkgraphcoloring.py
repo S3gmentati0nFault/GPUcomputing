@@ -1,5 +1,5 @@
 def check_coloring():
-    path = "content/testing"
+    path = "content/testing/"
 
     graph_file = open(path + "graph.txt", "r")
     coloring_file = open(path + "coloring.txt", "r")
