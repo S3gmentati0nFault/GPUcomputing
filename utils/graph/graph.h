@@ -30,6 +30,29 @@ struct GraphStruct {
 		return(cumDegs[i+1]-cumDegs[i]);
 	}
 
+	// Function that saves to file the contents of the current graph
+	void graphPrinter() {
+		char path[] = "../../testing/graph.txt";
+		FILE *fptr;
+
+		// Open the file in writing mode
+		fptr = fopen(path, "w");
+
+		// Write down the size of the graph
+		fprintf(fptr, "%d\n", nodeSize);
+
+		// Write the adjacency lists
+		for(int i = 0; i < nodeSize; ++i) {
+			for (int j = 0; j < deg(i); j++) {
+				fprintf(fptr, "%d,", neighs[cumDegs[i] + j]);
+			}
+			fprintf(fptr, "\n");
+		}
+
+		// Close the file
+		fclose(fptr);
+	}
+
 };
 
 /**
