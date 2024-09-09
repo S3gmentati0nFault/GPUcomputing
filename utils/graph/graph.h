@@ -4,15 +4,15 @@
 #define GRAPH_H
 
 typedef unsigned int node;     // graph node
-typedef unsigned int node_sz;  // graph node size
+typedef unsigned int uint;
 
 /**
  * Base structure (array 1D format) of a graph
  */
 struct GraphStruct {
-	node_sz nodeSize{0};             // num of graph nodes
-	node_sz edgeSize{0};             // num of graph edges
-	node_sz* cumDegs{nullptr};       // cumsum of node degrees
+	uint nodeSize{0};             // num of graph nodes
+	uint edgeSize{0};             // num of graph edges
+	uint* cumDegs{nullptr};       // cumsum of node degrees
 	node* neighs{nullptr};           // list of neighbors for all nodes (edges)
 	float* weights{nullptr};
 
@@ -41,7 +41,7 @@ struct GraphStruct {
 	}
 
 	// return the degree of node i
-	node_sz deg(node i) {
+	uint deg(node i) {
 		return(cumDegs[i+1]-cumDegs[i]);
 	}
 
@@ -60,8 +60,8 @@ struct GraphStruct {
 		fprintf(fptr, "%d\n", nodeSize);
 
 		// Write the adjacency lists
-		for(int i = 0; i < nodeSize; ++i) {
-			for (int j = 0; j < deg(i); j++) {
+		for(node i = 0; i < nodeSize; ++i) {
+			for (node j = 0; j < deg(i); j++) {
 				fprintf(fptr, "%d,", neighs[cumDegs[i] + j]);
 			}
 			fprintf(fptr, "\n");
@@ -79,20 +79,20 @@ struct GraphStruct {
 class Graph {
 	float density{0.0f};	        // Probability of an edge (Erdos graph)
 	GraphStruct * str{nullptr};     // graph structure
-	node_sz maxDeg{0};
-	node_sz minDeg{0};
+	uint maxDeg{0};
+	uint minDeg{0};
 	float meanDeg{0.0f};
 	bool connected{true};
 	bool GPUEnabled{true};
 
 public:
-	Graph(node_sz nn, bool GPUEnb) : GPUEnabled{GPUEnb} {setup(nn);}
-	void setup(node_sz);	                             // CPU/GPU mem setup
+	Graph(uint nn, bool GPUEnb) : GPUEnabled{GPUEnb} {setup(nn);}
+	void setup(uint);	                             // CPU/GPU mem setup
 	void randGraph(float, bool, int, std::default_random_engine&);  // generate an Erdos random graph
 	void print(bool);
 	void print_d(GraphStruct *, bool);
 	GraphStruct* getStruct() {return str;}
-	void memsetGPU(node_sz, std::string);                 // use UVA memory on CPU/GPU
+	void memsetGPU(uint, std::string);                 // use UVA memory on CPU/GPU
 };
 
 #endif

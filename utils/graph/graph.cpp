@@ -13,9 +13,10 @@ using namespace std;
  * @param density probability of an edge (expected density)
  * @param eng seed
  */
-void Graph::setup(node_sz nn) {
-	if (GPUEnabled)
+void Graph::setup(uint nn) {
+	if (GPUEnabled) {
 		memsetGPU(nn, string("nodes"));
+	}
 	else {
 		str = new GraphStruct();
 		str->cumDegs = new node[nn + 1]{};  // starts by zero
@@ -44,8 +45,8 @@ void Graph::randGraph(float prob, bool weighted, int weight_limit, std::default_
 	// gen edges
 	vector<int>* edges = new vector<int>[n];
 	vector<float>* weights = new vector<float>[n];
-	for (int i = 0; i < n - 1; i++) {
-		for (int j = i + 1; j < n; j++)
+	for (node i = 0; i < n - 1; i++) {
+		for (node j = i + 1; j < n; j++)
 			if (randR(eng) < prob) {
 				edges[i].push_back(j);
 				edges[j].push_back(i);
@@ -59,13 +60,14 @@ void Graph::randGraph(float prob, bool weighted, int weight_limit, std::default_
 				}
 			}
 	}
-	for (int i = 0; i < n; i++)
+	for (node i = 0; i < n; i++) {
 		str->cumDegs[i + 1] += str->cumDegs[i];
+	}
 
 	// max, min, mean deg
 	maxDeg = 0;
 	minDeg = n;
-	for (int i = 0; i < n; i++) {
+	for (uint i = 0; i < n; i++) {
 		if (str->deg(i) > maxDeg)
 			maxDeg = str->deg(i);
 		if (str->deg(i) < minDeg)
@@ -81,12 +83,15 @@ void Graph::randGraph(float prob, bool weighted, int weight_limit, std::default_
 	// manage memory for edges with CUDA Unified Memory
 	if (GPUEnabled)
 		memsetGPU(n,"edges");
-	else
+	else {
 		str->neighs = new node[str->edgeSize] { };
+		str->weights = new float[str->edgeSize] { };
+	}
 
-	for (int i = 0; i < n; i++)
+	for (node i = 0; i < n; i++) {
 		memcpy((str->neighs + str->cumDegs[i]), edges[i].data(), sizeof(int) * edges[i].size());
 		memcpy((str->weights + str->cumDegs[i]), weights[i].data(), sizeof(int) * weights[i].size());
+	}
 
 	// Memory deallocation
 	delete[] edges;
@@ -106,13 +111,12 @@ void Graph::print(bool verbose) {
 		 << endl;
 
 	if (verbose) {
-		for (int i = 0; i < n; i++) {
+		for (node i = 0; i < n; i++) {
 			cout << "   node(" << i << ")" << "["
 					<< str->cumDegs[i + 1] - str->cumDegs[i] << "]-> ";
-			for (int j = 0; j < str->cumDegs[i + 1] - str->cumDegs[i]; j++) {
-				cout << str->neighs[str->cumDegs[i] + j] 
-					 << "(" << str->weights[str->cumDegs[i] + j] 
-					 << ") ";
+			for (node j = 0; j < str->cumDegs[i + 1] - str->cumDegs[i]; j++) {
+				cout << str->neighs[str->cumDegs[i] + j]; 
+				printf("(%.2f) ", str->weights[str->cumDegs[i] + j]);
 			}
 			cout << "\n";
 		}
