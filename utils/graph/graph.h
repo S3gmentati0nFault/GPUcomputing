@@ -14,15 +14,30 @@ struct GraphStruct {
 	node_sz edgeSize{0};             // num of graph edges
 	node_sz* cumDegs{nullptr};       // cumsum of node degrees
 	node* neighs{nullptr};           // list of neighbors for all nodes (edges)
+	float* weights{nullptr};
 
 	~GraphStruct() {delete[] neighs; delete[] cumDegs;}
 
 	// check whether node j is a neighbor of node i
-	bool isNeighbor(node i, node j) {
-		for (unsigned k = 0; k < deg(i); k++) 
-			if (neighs[cumDegs[i]+k] == j)
-	    	return true;
-	  return false;
+	int isNeighbor(node i, node j) {
+		for (unsigned k = 0; k < deg(i); k++) {
+			if (neighs[cumDegs[i]+k] == j) {
+				return k;				
+			}
+		}
+	  	return -1;
+	}
+
+	// Getter for the weight associated to an edge
+	float getWeight(node i, node j) {
+		int position = isNeighbor(i, j);
+
+		if(position == -1) {
+			return -1;
+		}
+		else {
+			return weights[cumDegs[i] + position];
+		}
 	}
 
 	// return the degree of node i
@@ -73,7 +88,7 @@ class Graph {
 public:
 	Graph(node_sz nn, bool GPUEnb) : GPUEnabled{GPUEnb} {setup(nn);}
 	void setup(node_sz);	                             // CPU/GPU mem setup
-	void randGraph(float, std::default_random_engine&);  // generate an Erdos random graph
+	void randGraph(float, bool, int, std::default_random_engine&);  // generate an Erdos random graph
 	void print(bool);
 	void print_d(GraphStruct *, bool);
 	GraphStruct* getStruct() {return str;}

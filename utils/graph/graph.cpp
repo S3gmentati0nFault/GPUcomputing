@@ -2,6 +2,7 @@
 #include <cstring>
 #include <iostream>
 #include <memory>
+#include <limits.h>
 #include "graph.h"
 
 using namespace std;
@@ -26,15 +27,23 @@ void Graph::setup(node_sz nn) {
  * Generate a new random graph
  * @param eng seed
  */
-void Graph::randGraph(float prob, std::default_random_engine & eng) {
+void Graph::randGraph(float prob, bool weighted, int weight_limit, std::default_random_engine & eng) {
 	if (prob < 0 || prob > 1) {
 		printf("[Graph] Warning: Probability not valid (set p = 0.5)!!\n");
 	}
+	if (!weighted && weight_limit != -1) {
+		printf("[Graph] Error: Is the graph weighted or not?\n");
+	}
+	if (weight_limit == -1) {
+		weight_limit = UINT_MAX;
+	}
+
 	uniform_real_distribution<> randR(0.0, 1.0);
 	node n = str->nodeSize;
 
 	// gen edges
 	vector<int>* edges = new vector<int>[n];
+	vector<float>* weights = new vector<float>[n];
 	for (int i = 0; i < n - 1; i++) {
 		for (int j = i + 1; j < n; j++)
 			if (randR(eng) < prob) {
@@ -43,6 +52,11 @@ void Graph::randGraph(float prob, std::default_random_engine & eng) {
 				str->cumDegs[i + 1]++;
 				str->cumDegs[j + 1]++;
 				str->edgeSize += 2;
+				if (weighted) {
+					float weight = weight_limit * randR(eng);
+					weights[i].push_back(weight);
+					weights[j].push_back(weight);
+				}
 			}
 	}
 	for (int i = 0; i < n; i++)
@@ -72,6 +86,11 @@ void Graph::randGraph(float prob, std::default_random_engine & eng) {
 
 	for (int i = 0; i < n; i++)
 		memcpy((str->neighs + str->cumDegs[i]), edges[i].data(), sizeof(int) * edges[i].size());
+		memcpy((str->weights + str->cumDegs[i]), weights[i].data(), sizeof(int) * weights[i].size());
+
+	// Memory deallocation
+	delete[] edges;
+	delete[] weights;
 }
 
 /**
@@ -91,7 +110,9 @@ void Graph::print(bool verbose) {
 			cout << "   node(" << i << ")" << "["
 					<< str->cumDegs[i + 1] - str->cumDegs[i] << "]-> ";
 			for (int j = 0; j < str->cumDegs[i + 1] - str->cumDegs[i]; j++) {
-				cout << str->neighs[str->cumDegs[i] + j] << " ";
+				cout << str->neighs[str->cumDegs[i] + j] 
+					 << "(" << str->weights[str->cumDegs[i] + j] 
+					 << ") ";
 			}
 			cout << "\n";
 		}
