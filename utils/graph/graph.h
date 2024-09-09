@@ -47,7 +47,7 @@ struct GraphStruct {
 	}
 
 	// Function that saves to file the contents of the current graph
-	void graphWriter(std::string path) {
+	void graphWriter(char *path) {
 		FILE *fptr;
 
 		// Open the file in writing mode
@@ -62,7 +62,7 @@ struct GraphStruct {
 		// Write the adjacency lists
 		for(node i = 0; i < nodeSize; ++i) {
 			for (node j = 0; j < deg(i); j++) {
-				fprintf(fptr, "%d,%f", neighs[cumDegs[i] + j], weights[cumDegs[i] + j]);
+				fprintf(fptr, "%d,%f,", neighs[cumDegs[i] + j], weights[cumDegs[i] + j]);
 			}
 			fprintf(fptr, "\n");
 		}
@@ -70,7 +70,6 @@ struct GraphStruct {
 		// Close the file
 		fclose(fptr);
 	}
-
 };
 
 /**
