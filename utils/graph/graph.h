@@ -1,4 +1,5 @@
 #include <random>
+#include <string>
 
 #ifndef GRAPH_H
 #define GRAPH_H
@@ -46,7 +47,7 @@ struct GraphStruct {
 	}
 
 	// Function that saves to file the contents of the current graph
-	void graphWriter(char *path) {
+	void graphWriter(std::string path) {
 		FILE *fptr;
 
 		// Open the file in writing mode
