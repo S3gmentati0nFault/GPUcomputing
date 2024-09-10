@@ -44,7 +44,7 @@ void Graph::randGraph(float prob, bool weighted, int weight_limit, std::default_
 
 	// gen edges
 	vector<int>* edges = new vector<int>[n];
-	vector<float>* weights = new vector<float>[n];
+	vector<int>* weights = new vector<int>[n];
 	for (node i = 0; i < n - 1; i++) {
 		for (node j = i + 1; j < n; j++)
 			if (randR(eng) < prob) {
@@ -54,7 +54,7 @@ void Graph::randGraph(float prob, bool weighted, int weight_limit, std::default_
 				str->cumDegs[j + 1]++;
 				str->edgeSize += 2;
 				if (weighted) {
-					float weight = weight_limit * randR(eng);
+					int weight = (int) (weight_limit * randR(eng));
 					weights[i].push_back(weight);
 					weights[j].push_back(weight);
 				}
@@ -85,7 +85,7 @@ void Graph::randGraph(float prob, bool weighted, int weight_limit, std::default_
 		memsetGPU(n,"edges");
 	else {
 		str->neighs = new node[str->edgeSize] { };
-		str->weights = new float[str->edgeSize] { };
+		str->weights = new int[str->edgeSize] { };
 	}
 
 	for (node i = 0; i < n; i++) {
@@ -116,7 +116,7 @@ void Graph::print(bool verbose) {
 					<< str->cumDegs[i + 1] - str->cumDegs[i] << "]-> ";
 			for (node j = 0; j < str->cumDegs[i + 1] - str->cumDegs[i]; j++) {
 				cout << str->neighs[str->cumDegs[i] + j]; 
-				printf("(%.2f) ", str->weights[str->cumDegs[i] + j]);
+				printf("(%d) ", str->weights[str->cumDegs[i] + j]);
 			}
 			cout << "\n";
 		}

@@ -15,7 +15,7 @@ struct GraphStruct {
 	uint edgeSize{0};             // num of graph edges
 	uint* cumDegs{nullptr};       // cumsum of node degrees
 	node* neighs{nullptr};           // list of neighbors for all nodes (edges)
-	float* weights{nullptr};
+	int* weights{nullptr};
 
 	~GraphStruct() {delete[] neighs; delete[] cumDegs;}
 
@@ -30,7 +30,7 @@ struct GraphStruct {
 	}
 
 	// Getter for the weight associated to an edge
-	float getWeight(node i, node j) {
+	int getWeight(node i, node j) {
 		int position = isNeighbor(i, j);
 
 		if(position == -1) {
@@ -62,7 +62,7 @@ struct GraphStruct {
 		// Write the adjacency lists
 		for(node i = 0; i < nodeSize; ++i) {
 			for (node j = 0; j < deg(i); j++) {
-				fprintf(fptr, "%d,%f,", neighs[cumDegs[i] + j], weights[cumDegs[i] + j]);
+				fprintf(fptr, "%d,%d,", neighs[cumDegs[i] + j], weights[cumDegs[i] + j]);
 			}
 			fprintf(fptr, "\n");
 		}
