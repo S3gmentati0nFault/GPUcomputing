@@ -113,10 +113,9 @@ void Graph::print(bool verbose) {
 	if (verbose) {
 		for (node i = 0; i < n; i++) {
 			cout << "   node(" << i << ")" << "["
-					<< str->cumDegs[i + 1] - str->cumDegs[i] << "]-> ";
-			for (node j = 0; j < str->cumDegs[i + 1] - str->cumDegs[i]; j++) {
-				cout << str->neighs[str->cumDegs[i] + j]; 
-				printf("(%d) ", str->weights[str->cumDegs[i] + j]);
+					<< str->deg(i) << "]-> ";
+			for (node j = 0; j < str->deg(i); j++) {
+				cout << str->getNeigh(i, j) << "(" << str->getWeight(i, j) << ") "; 
 			}
 			cout << "\n";
 		}
