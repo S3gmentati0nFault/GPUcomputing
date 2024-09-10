@@ -17,7 +17,11 @@ struct GraphStruct {
 	node* neighs{nullptr};           // list of neighbors for all nodes (edges)
 	int* weights{nullptr};
 
-	~GraphStruct() {delete[] neighs; delete[] cumDegs;}
+	~GraphStruct() {
+		delete[] neighs;
+		delete[] cumDegs;
+		delete[] weights;
+	}
 
 	// check whether node j is a neighbor of node i
 	bool isNeighbor(node i, node j) {
