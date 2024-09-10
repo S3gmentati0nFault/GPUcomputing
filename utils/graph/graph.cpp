@@ -7,6 +7,10 @@
 
 using namespace std;
 
+Graph::~Graph() {
+	delete str;
+}
+
 /**
  * Generate an Erdos random graph
  * @param n number of nodes
