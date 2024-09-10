@@ -20,26 +20,26 @@ struct GraphStruct {
 	~GraphStruct() {delete[] neighs; delete[] cumDegs;}
 
 	// check whether node j is a neighbor of node i
-	int isNeighbor(node i, node j) {
+	bool isNeighbor(node i, node j) {
 		for (unsigned k = 0; k < deg(i); k++) {
 			if (neighs[cumDegs[i]+k] == j) {
-				return k;				
+				return true;				
 			}
 		}
-	  	return -1;
+	  	return false;
 	}
 
-	// Getter for the weight associated to an edge
-	int getWeight(node i, node j) {
-		int position = isNeighbor(i, j);
-
-		if(position == -1) {
-			return -1;
-		}
-		else {
-			return weights[cumDegs[i] + position];
-		}
+	// Getter for the weight associated to the j-th neighbour of i
+	int getWeight(node i, uint j) {
+		return weights[cumDegs[i] + j];
 	}
+
+	// Getter for the j-th neighbour of i
+	node getNeigh(node i, uint j) {
+		return neighs[cumDegs[i] + j];
+	}
+
+
 
 	// return the degree of node i
 	uint deg(node i) {
