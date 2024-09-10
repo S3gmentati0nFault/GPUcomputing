@@ -21,12 +21,22 @@ struct GraphStruct {
 
 	// check whether node j is a neighbor of node i
 	bool isNeighbor(node i, node j) {
-		for (unsigned k = 0; k < deg(i); k++) {
+		for (uint k = 0; k < deg(i); k++) {
 			if (neighs[cumDegs[i]+k] == j) {
 				return true;				
 			}
 		}
 	  	return false;
+	}
+
+	// finds the weight associated to a certain neighbour
+	bool findWeight(node i, node j) {
+		for (uint k = 0; k < deg(i); k++) {
+			if (neighs[cumDegs[i]+k] == j) {
+				return getWeight(i, k);
+			}
+		}
+	  	return -1;
 	}
 
 	// Getter for the weight associated to the j-th neighbour of i
