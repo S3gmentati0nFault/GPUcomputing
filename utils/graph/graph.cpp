@@ -7,7 +7,8 @@
 
 using namespace std;
 
-Graph::~Graph() {
+Graph::~Graph()
+{
 	delete str;
 }
 
@@ -17,13 +18,16 @@ Graph::~Graph() {
  * @param density probability of an edge (expected density)
  * @param eng seed
  */
-void Graph::setup(uint nn) {
-	if (GPUEnabled) {
+void Graph::setup(uint nn)
+{
+	if (GPUEnabled)
+	{
 		memsetGPU(nn, string("nodes"));
 	}
-	else {
+	else
+	{
 		str = new GraphStruct();
-		str->cumDegs = new node[nn + 1]{};  // starts by zero
+		str->cumDegs = new node[nn + 1]{}; // starts by zero
 	}
 	str->nodeSize = nn;
 }
@@ -32,14 +36,18 @@ void Graph::setup(uint nn) {
  * Generate a new random graph
  * @param eng seed
  */
-void Graph::randGraph(float prob, bool weighted, int weight_limit, std::default_random_engine & eng) {
-	if (prob < 0 || prob > 1) {
+void Graph::randGraph(float prob, bool weighted, int weight_limit, std::default_random_engine &eng)
+{
+	if (prob < 0 || prob > 1)
+	{
 		printf("[Graph] Warning: Probability not valid (set p = 0.5)!!\n");
 	}
-	if (!weighted && weight_limit != -1) {
+	if (!weighted && weight_limit != -1)
+	{
 		printf("[Graph] Error: Is the graph weighted or not?\n");
 	}
-	if (weight_limit == -1) {
+	if (weight_limit == -1)
+	{
 		weight_limit = UINT_MAX;
 	}
 
@@ -47,38 +55,43 @@ void Graph::randGraph(float prob, bool weighted, int weight_limit, std::default_
 	node n = str->nodeSize;
 
 	// gen edges
-	vector<int>* edges = new vector<int>[n];
-	vector<int>* weights = new vector<int>[n];
-	for (node i = 0; i < n - 1; i++) {
+	vector<int> *edges = new vector<int>[n];
+	vector<int> *weights = new vector<int>[n];
+	for (node i = 0; i < n - 1; i++)
+	{
 		for (node j = i + 1; j < n; j++)
-			if (randR(eng) < prob) {
+			if (randR(eng) < prob)
+			{
 				edges[i].push_back(j);
 				edges[j].push_back(i);
 				str->cumDegs[i + 1]++;
 				str->cumDegs[j + 1]++;
 				str->edgeSize += 2;
-				if (weighted) {
-					int weight = (int) (weight_limit * randR(eng));
+				if (weighted)
+				{
+					int weight = (int)(weight_limit * randR(eng));
 					weights[i].push_back(weight);
 					weights[j].push_back(weight);
 				}
 			}
 	}
-	for (node i = 0; i < n; i++) {
+	for (node i = 0; i < n; i++)
+	{
 		str->cumDegs[i + 1] += str->cumDegs[i];
 	}
 
 	// max, min, mean deg
 	maxDeg = 0;
 	minDeg = n;
-	for (uint i = 0; i < n; i++) {
+	for (uint i = 0; i < n; i++)
+	{
 		if (str->deg(i) > maxDeg)
 			maxDeg = str->deg(i);
 		if (str->deg(i) < minDeg)
 			minDeg = str->deg(i);
 	}
-	density = (float) str->edgeSize / (float) (n * (n - 1));
-	meanDeg = (float) str->edgeSize / (float) n;
+	density = (float)str->edgeSize / (float)(n * (n - 1));
+	meanDeg = (float)str->edgeSize / (float)n;
 	if (minDeg == 0)
 		connected = false;
 	else
@@ -86,13 +99,15 @@ void Graph::randGraph(float prob, bool weighted, int weight_limit, std::default_
 
 	// manage memory for edges with CUDA Unified Memory
 	if (GPUEnabled)
-		memsetGPU(n,"edges");
-	else {
-		str->neighs = new node[str->edgeSize] { };
-		str->weights = new int[str->edgeSize] { };
+		memsetGPU(n, "edges");
+	else
+	{
+		str->neighs = new node[str->edgeSize]{};
+		str->weights = new int[str->edgeSize]{};
 	}
 
-	for (node i = 0; i < n; i++) {
+	for (node i = 0; i < n; i++)
+	{
 		memcpy((str->neighs + str->cumDegs[i]), edges[i].data(), sizeof(int) * edges[i].size());
 		memcpy((str->weights + str->cumDegs[i]), weights[i].data(), sizeof(int) * weights[i].size());
 	}
@@ -106,24 +121,27 @@ void Graph::randGraph(float prob, bool weighted, int weight_limit, std::default_
  * Print the graph (verbose = 1 for "verbose print")
  * @param verbose print the complete graph
  */
-void Graph::print(bool verbose) {
+void Graph::print(bool verbose)
+{
 	node n = str->nodeSize;
 	cout << "** Graph (num node: " << n << ", num edges: " << str->edgeSize
-			<< ")" << endl;
+		 << ")" << endl;
 	cout << "         (min deg: " << minDeg << ", max deg: " << maxDeg
 		 << ", mean deg: " << meanDeg << ", connected: " << connected << ")"
 		 << endl;
 
-	if (verbose) {
-		for (node i = 0; i < n; i++) {
+	if (verbose)
+	{
+		for (node i = 0; i < n; i++)
+		{
 			cout << "   node(" << i << ")" << "["
-					<< str->deg(i) << "]-> ";
-			for (node j = 0; j < str->deg(i); j++) {
-				cout << str->getNeigh(i, j) << "(" << str->getWeight(i, j) << ") "; 
+				 << str->deg(i) << "]-> ";
+			for (node j = 0; j < str->deg(i); j++)
+			{
+				cout << str->getNeigh(i, j) << "(" << str->getWeight(i, j) << ") ";
 			}
 			cout << "\n";
 		}
 		cout << "\n";
 	}
 }
-
