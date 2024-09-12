@@ -5,6 +5,13 @@
 
 using namespace std;
 
+void Graph::deallocGPU() {
+    CHECK(cudaFree(str->neighs));
+    CHECK(cudaFree(str->weights));
+    CHECK(cudaFree(str->cumDegs));
+    CHECK(cudaFree(str));
+}
+
 /**
  * Set the CUDA Unified Memory for nodes and edges
  * @param memType node or edge memory type

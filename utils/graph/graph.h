@@ -107,6 +107,7 @@ public:
 	void print_d(GraphStruct *, bool);
 	GraphStruct* getStruct() {return str;}
 	void memsetGPU(uint, std::string);                 // use UVA memory on CPU/GPU
+	void deallocGPU();
 };
 
 #endif
