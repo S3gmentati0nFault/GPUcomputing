@@ -4,69 +4,82 @@
 #ifndef GRAPH_H
 #define GRAPH_H
 
-typedef unsigned int node;     // graph node
+typedef unsigned int node; // graph node
 typedef unsigned int uint;
+typedef short int sint;
+typedef long int lint;
 
 /**
  * Base structure (array 1D format) of a graph
  */
-struct GraphStruct {
-	uint nodeSize{0};             // num of graph nodes
-	uint edgeSize{0};             // num of graph edges
-	uint* cumDegs{nullptr};       // cumsum of node degrees
-	node* neighs{nullptr};           // list of neighbors for all nodes (edges)
-	int* weights{nullptr};
+struct GraphStruct
+{
+	uint nodeSize{0};		// num of graph nodes
+	uint edgeSize{0};		// num of graph edges
+	uint *cumDegs{nullptr}; // cumsum of node degrees
+	node *neighs{nullptr};	// list of neighbors for all nodes (edges)
+	int *weights{nullptr};
 
-	~GraphStruct() {
+	~GraphStruct()
+	{
 		delete[] neighs;
 		delete[] cumDegs;
 		delete[] weights;
 	}
 
 	// check whether node j is a neighbor of node i
-	bool isNeighbor(node i, node j) {
-		for (uint k = 0; k < deg(i); k++) {
-			if (neighs[cumDegs[i]+k] == j) {
-				return true;				
+	bool isNeighbor(node i, node j)
+	{
+		for (uint k = 0; k < deg(i); k++)
+		{
+			if (neighs[cumDegs[i] + k] == j)
+			{
+				return true;
 			}
 		}
-	  	return false;
+		return false;
 	}
 
 	// finds the weight associated to a certain neighbour
-	bool findWeight(node i, node j) {
-		for (uint k = 0; k < deg(i); k++) {
-			if (neighs[cumDegs[i]+k] == j) {
+	bool findWeight(node i, node j)
+	{
+		for (uint k = 0; k < deg(i); k++)
+		{
+			if (neighs[cumDegs[i] + k] == j)
+			{
 				return getWeight(i, k);
 			}
 		}
-	  	return -1;
+		return -1;
 	}
 
 	// Getter for the weight associated to the j-th neighbour of i
-	int getWeight(node i, uint j) {
+	int getWeight(node i, uint j)
+	{
 		return weights[cumDegs[i] + j];
 	}
 
 	// Getter for the j-th neighbour of i
-	node getNeigh(node i, uint j) {
+	node getNeigh(node i, uint j)
+	{
 		return neighs[cumDegs[i] + j];
 	}
 
-
-
 	// return the degree of node i
-	uint deg(node i) {
-		return(cumDegs[i+1]-cumDegs[i]);
+	uint deg(node i)
+	{
+		return (cumDegs[i + 1] - cumDegs[i]);
 	}
 
 	// Function that saves to file the contents of the current graph
-	void graphWriter(char *path) {
+	void graphWriter(char *path)
+	{
 		FILE *fptr;
 
 		// Open the file in writing mode
 		fptr = fopen(path, "w");
-		if(!fptr) {
+		if (!fptr)
+		{
 			printf("There was an error while opening the file\n");
 		}
 
@@ -74,8 +87,10 @@ struct GraphStruct {
 		fprintf(fptr, "%d\n", nodeSize);
 
 		// Write the adjacency lists
-		for(node i = 0; i < nodeSize; ++i) {
-			for (node j = 0; j < deg(i); j++) {
+		for (node i = 0; i < nodeSize; ++i)
+		{
+			for (node j = 0; j < deg(i); j++)
+			{
 				fprintf(fptr, "%d,%d,", neighs[cumDegs[i] + j], weights[cumDegs[i] + j]);
 			}
 			fprintf(fptr, "\n");
@@ -89,9 +104,10 @@ struct GraphStruct {
 /**
  * It manages a graph for CPU & GPU
  */
-class Graph {
-	float density{0.0f};	        // Probability of an edge (Erdos graph)
-	GraphStruct * str{nullptr};     // graph structure
+class Graph
+{
+	float density{0.0f};	   // Probability of an edge (Erdos graph)
+	GraphStruct *str{nullptr}; // graph structure
 	uint maxDeg{0};
 	uint minDeg{0};
 	float meanDeg{0.0f};
@@ -99,14 +115,14 @@ class Graph {
 	bool GPUEnabled{true};
 
 public:
-	Graph(uint nn, bool GPUEnb) : GPUEnabled{GPUEnb} {setup(nn);}
+	Graph(uint nn, bool GPUEnb) : GPUEnabled{GPUEnb} { setup(nn); }
 	~Graph();
-	void setup(uint);	                             // CPU/GPU mem setup
-	void randGraph(float, bool, int, std::default_random_engine&);  // generate an Erdos random graph
+	void setup(uint);												// CPU/GPU mem setup
+	void randGraph(float, bool, int, std::default_random_engine &); // generate an Erdos random graph
 	void print(bool);
 	void print_d(GraphStruct *, bool);
-	GraphStruct* getStruct() {return str;}
-	void memsetGPU(uint, std::string);                 // use UVA memory on CPU/GPU
+	GraphStruct *getStruct() { return str; }
+	void memsetGPU(uint, std::string); // use UVA memory on CPU/GPU
 	void deallocGPU();
 };
 
