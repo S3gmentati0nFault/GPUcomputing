@@ -7,14 +7,25 @@
 
 using namespace std;
 
+void Graph::graphConstruction(uint nnn, uint nne, node *nNeighbours, uint *neWeights, uint *nCumDegs)
+{
+	str->edgeSize = nne;
+	memsetGPU(nnn, "edges");
+	memcpy(&str->neighs, nNeighbours, nne * sizeof(node));
+	memcpy(&str->weights, neWeights, nne * sizeof(uint));
+	memcpy(&str->cumDegs, nCumDegs, nnn * sizeof(node));
+}
+
 Graph::~Graph()
 {
-    if (GPUEnabled) {
-        deallocGPU();
-    }
-    else {
-        delete str;
-    }
+	if (GPUEnabled)
+	{
+		deallocGPU();
+	}
+	else
+	{
+		delete str;
+	}
 }
 
 /**
@@ -103,9 +114,10 @@ void Graph::randGraph(float prob, bool weighted, int weight_limit, std::default_
 		connected = true;
 
 	// manage memory for edges with CUDA Unified Memory
-	if (GPUEnabled) {
+	if (GPUEnabled)
+	{
 		memsetGPU(n, "edges");
-  }
+	}
 	else
 	{
 		str->neighs = new node[str->edgeSize]{};

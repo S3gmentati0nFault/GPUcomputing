@@ -116,8 +116,14 @@ class Graph
 
 public:
 	Graph(uint nn, bool GPUEnb) : GPUEnabled{GPUEnb} { setup(nn); }
+	Graph(uint nnn, uint nne, node *nNeighbours, uint *neWeights, uint *nCumDegs, bool GPUEnb) : GPUEnabled{GPUEnb}
+	{
+		setup(nnn);
+		graphConstruction(nnn, nne, nNeighbours, neWeights, nCumDegs);
+	};
 	~Graph();
-	void setup(uint);												// CPU/GPU mem setup
+	void setup(uint); // CPU/GPU mem setup
+	void graphConstruction(uint nnn, uint nne, node *nNeighbours, uint *neWeights, uint *nCumDegs);
 	void randGraph(float, bool, int, std::default_random_engine &); // generate an Erdos random graph
 	void print(bool);
 	void print_d(GraphStruct *, bool);
