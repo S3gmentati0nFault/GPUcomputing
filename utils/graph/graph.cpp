@@ -11,9 +11,9 @@ void Graph::graphConstruction(uint nnn, uint nne, node *nNeighbours, uint *neWei
 {
 	str->edgeSize = nne;
 	memsetGPU(nnn, "edges");
-	memcpy(&str->neighs, nNeighbours, nne * sizeof(node));
-	memcpy(&str->weights, neWeights, nne * sizeof(uint));
-	memcpy(&str->cumDegs, nCumDegs, nnn * sizeof(node));
+	memcpy(str->neighs, nNeighbours, nne * sizeof(node));
+	memcpy(str->weights, neWeights, nne * sizeof(uint));
+	memcpy(str->cumDegs, nCumDegs, nnn * sizeof(node));
 }
 
 Graph::~Graph()
