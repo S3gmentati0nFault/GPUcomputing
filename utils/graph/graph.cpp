@@ -13,7 +13,7 @@ void Graph::graphConstruction(uint nnn, uint nne, node *nNeighbours, uint *neWei
 	memsetGPU(nnn, "edges");
 	memcpy(str->neighs, nNeighbours, nne * sizeof(node));
 	memcpy(str->weights, neWeights, nne * sizeof(uint));
-	memcpy(str->cumDegs, nCumDegs, nnn * sizeof(node));
+	memcpy(str->cumDegs, nCumDegs, (nnn + 1) * sizeof(node));
 }
 
 Graph::~Graph()
