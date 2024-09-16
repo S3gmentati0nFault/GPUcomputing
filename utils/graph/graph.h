@@ -116,11 +116,18 @@ class Graph
 
 public:
 	Graph(uint nn, bool GPUEnb) : GPUEnabled{GPUEnb} { setup(nn); }
-	Graph(uint nnn, uint nne, node *nNeighbours, uint *neWeights, uint *nCumDegs, bool GPUEnb) : GPUEnabled{GPUEnb}
+	void copyConstructor(uint nnn, uint nne, node *nNeighbours, uint *neWeights, uint *nCumDegs)
 	{
+    if (GPUEnabled) {
+      deallocGPU();
+    }
+    else {
+      delete str;
+    }
 		setup(nnn);
 		graphConstruction(nnn, nne, nNeighbours, neWeights, nCumDegs);
 	};
+
 	~Graph();
 	void setup(uint); // CPU/GPU mem setup
 	void graphConstruction(uint nnn, uint nne, node *nNeighbours, uint *neWeights, uint *nCumDegs);
