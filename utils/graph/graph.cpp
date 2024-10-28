@@ -10,7 +10,7 @@ using namespace std;
 void Graph::graphConstruction(uint nnn, uint nne, node *nNeighbours, uint *neWeights, uint *nCumDegs)
 {
 	str->edgeSize = nne;
-	memsetGPU(nnn, "edges");
+	//memsetGPU(nnn, "edges");
 	memcpy(str->neighs, nNeighbours, nne * sizeof(node));
 	memcpy(str->weights, neWeights, nne * sizeof(uint));
 	memcpy(str->cumDegs, nCumDegs, (nnn + 1) * sizeof(node));
@@ -20,7 +20,7 @@ Graph::~Graph()
 {
 	if (GPUEnabled)
 	{
-		deallocGPU();
+		//deallocGPU();
 	}
 	else
 	{
@@ -38,12 +38,13 @@ void Graph::setup(uint nn)
 {
 	if (GPUEnabled)
 	{
-		memsetGPU(nn, string("nodes"));
+		//memsetGPU(nn, string("nodes"));
 	}
 	else
 	{
 		str = new GraphStruct();
 		str->cumDegs = new node[nn + 1]{}; // starts by zero
+		str->outdegrees = new uint[nn]{};
 	}
 	str->nodeSize = nn;
 }
@@ -94,6 +95,7 @@ void Graph::randGraph(float prob, bool weighted, int weight_limit, std::default_
 	for (node i = 0; i < n; i++)
 	{
 		str->cumDegs[i + 1] += str->cumDegs[i];
+		str->outdegrees[i] = str->cumDegs[i + 1] - str->cumDegs[i];
 	}
 
 	// max, min, mean deg
@@ -116,14 +118,13 @@ void Graph::randGraph(float prob, bool weighted, int weight_limit, std::default_
 	// manage memory for edges with CUDA Unified Memory
 	if (GPUEnabled)
 	{
-		memsetGPU(n, "edges");
+		//memsetGPU(n, "edges");
 	}
 	else
 	{
 		str->neighs = new node[str->edgeSize]{};
 		str->weights = new int[str->edgeSize]{};
 	}
-
 	for (node i = 0; i < n; i++)
 	{
 		memcpy((str->neighs + str->cumDegs[i]), edges[i].data(), sizeof(int) * edges[i].size());

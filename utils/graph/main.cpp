@@ -11,6 +11,7 @@ int main() {
 	Graph graph(size, GPUEnabled);
 	graph.randGraph(prob, true, 5, eng);
 	graph.print(true);
+	printf("%d\n", graph.getStruct()->deg(1));
 
     return 0;
 }

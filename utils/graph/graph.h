@@ -17,6 +17,7 @@ struct GraphStruct
 	uint nodeSize{0};		// num of graph nodes
 	uint edgeSize{0};		// num of graph edges
 	uint *cumDegs{nullptr}; // cumsum of node degrees
+	uint *outdegrees{nullptr}; // list of the outdegrees
 	node *neighs{nullptr};	// list of neighbors for all nodes (edges)
 	int *weights{nullptr};
 
@@ -24,6 +25,7 @@ struct GraphStruct
 	{
 		delete[] neighs;
 		delete[] cumDegs;
+		delete[] outdegrees;
 		delete[] weights;
 	}
 
@@ -68,7 +70,7 @@ struct GraphStruct
 	// return the degree of node i
 	uint deg(node i)
 	{
-		return (cumDegs[i + 1] - cumDegs[i]);
+		return outdegrees[i];
 	}
 
 	// Function that saves to file the contents of the current graph
