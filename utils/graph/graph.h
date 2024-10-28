@@ -30,16 +30,16 @@ struct GraphStruct
 	}
 
 	// check whether node j is a neighbor of node i
-	bool isNeighbor(node i, node j)
+	int isNeighbor(node i, node j)
 	{
 		for (uint k = 0; k < deg(i); k++)
 		{
 			if (neighs[cumDegs[i] + k] == j)
 			{
-				return true;
+				return k;
 			}
 		}
-		return false;
+		return -1;
 	}
 
 	// finds the weight associated to a certain neighbour
@@ -120,12 +120,14 @@ public:
 	Graph(uint nn, bool GPUEnb) : GPUEnabled{GPUEnb} { setup(nn); }
 	void copyConstructor(uint nnn, uint nne, node *nNeighbours, uint *neWeights, uint *nCumDegs)
 	{
-    if (GPUEnabled) {
-      deallocGPU();
-    }
-    else {
-      delete str;
-    }
+		if (GPUEnabled)
+		{
+			deallocGPU();
+		}
+		else
+		{
+			delete str;
+		}
 		setup(nnn);
 		graphConstruction(nnn, nne, nNeighbours, neWeights, nCumDegs);
 	};
@@ -139,6 +141,7 @@ public:
 	GraphStruct *getStruct() { return str; }
 	void memsetGPU(uint, std::string); // use UVA memory on CPU/GPU
 	void deallocGPU();
+	bool isConnected() {return connected;};
 };
 
 #endif
