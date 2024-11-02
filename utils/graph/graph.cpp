@@ -44,8 +44,28 @@ void Graph::setup(uint nn)
 	{
 		str = new GraphStruct();
 		str->cumDegs = new node[nn + 1]{}; // starts by zero
+		str->outdegrees = new uint[nn]{};
 	}
 	str->nodeSize = nn;
+}
+
+void Graph::setup(uint nn, uint ne)
+{
+	if (GPUEnabled)
+	{
+		memsetGPU(nn, string("nodes"));
+		memsetGPU(ne, string("edges"));
+	}
+	else
+	{
+		str = new GraphStruct();
+		str->cumDegs = new node[nn + 1]{}; // starts by zero
+		str->outdegrees = new uint[nn]{};
+		str->neighs = new uint[ne]{};
+		str->weights = new int[ne]{};
+	}
+	str->nodeSize = nn;
+	str->edgeSize = ne;
 }
 
 /**
@@ -94,6 +114,7 @@ void Graph::randGraph(float prob, bool weighted, int weight_limit, std::default_
 	for (node i = 0; i < n; i++)
 	{
 		str->cumDegs[i + 1] += str->cumDegs[i];
+		str->outdegrees[i] = str->cumDegs[i + 1] - str->cumDegs[i];
 	}
 
 	// max, min, mean deg
@@ -123,7 +144,6 @@ void Graph::randGraph(float prob, bool weighted, int weight_limit, std::default_
 		str->neighs = new node[str->edgeSize]{};
 		str->weights = new int[str->edgeSize]{};
 	}
-
 	for (node i = 0; i < n; i++)
 	{
 		memcpy((str->neighs + str->cumDegs[i]), edges[i].data(), sizeof(int) * edges[i].size());

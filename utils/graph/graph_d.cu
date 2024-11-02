@@ -5,11 +5,13 @@
 
 using namespace std;
 
-void Graph::deallocGPU() {
-    CHECK(cudaFree(str->neighs));
-    CHECK(cudaFree(str->weights));
-    CHECK(cudaFree(str->cumDegs));
-    CHECK(cudaFree(str));
+void Graph::deallocGPU()
+{
+  CHECK(cudaFree(str->neighs));
+  CHECK(cudaFree(str->weights));
+  CHECK(cudaFree(str->cumDegs));
+  CHECK(cudaFree(str->outdegrees));
+  CHECK(cudaFree(str));
 }
 
 /**
@@ -22,6 +24,7 @@ void Graph::memsetGPU(uint nn, string memType)
   {
     CHECK(cudaMallocManaged(&str, sizeof(GraphStruct)));
     CHECK(cudaMallocManaged(&(str->cumDegs), (nn + 1) * sizeof(node)));
+    CHECK(cudaMallocManaged(&(str->outdegrees), nn * sizeof(node)));
   }
   else if (!memType.compare("edges"))
   {
@@ -55,7 +58,4 @@ __global__ void print_d(GraphStruct *str, bool verbose)
   }
 }
 
-__global__ void hello_d()
-{
-  printf("Helloworld\n");
-}
+__global__ void hello_d() { printf("Helloworld\n"); }

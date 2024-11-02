@@ -14,16 +14,18 @@ typedef long int lint;
  */
 struct GraphStruct
 {
-	uint nodeSize{0};		// num of graph nodes
-	uint edgeSize{0};		// num of graph edges
-	uint *cumDegs{nullptr}; // cumsum of node degrees
-	node *neighs{nullptr};	// list of neighbors for all nodes (edges)
+	uint nodeSize{0};		   // num of graph nodes
+	uint edgeSize{0};		   // num of graph edges
+	uint *cumDegs{nullptr};	   // cumsum of node degrees
+	uint *outdegrees{nullptr}; // list of the outdegrees
+	node *neighs{nullptr};	   // list of neighbors for all nodes (edges)
 	int *weights{nullptr};
 
 	~GraphStruct()
 	{
 		delete[] neighs;
 		delete[] cumDegs;
+		delete[] outdegrees;
 		delete[] weights;
 	}
 
@@ -68,7 +70,7 @@ struct GraphStruct
 	// return the degree of node i
 	uint deg(node i)
 	{
-		return (cumDegs[i + 1] - cumDegs[i]);
+		return outdegrees[i];
 	}
 
 	// Function that saves to file the contents of the current graph
@@ -115,6 +117,10 @@ class Graph
 	bool GPUEnabled{true};
 
 public:
+	Graph(uint nn, uint ne, bool GPUEnb) : GPUEnabled{GPUEnb}
+	{
+		setup(nn, ne);
+	}
 	Graph(uint nn, bool GPUEnb) : GPUEnabled{GPUEnb} { setup(nn); }
 	void copyConstructor(uint nnn, uint nne, node *nNeighbours, uint *neWeights, uint *nCumDegs)
 	{
@@ -131,7 +137,8 @@ public:
 	};
 
 	~Graph();
-	void setup(uint); // CPU/GPU mem setup
+	void setup(uint);		// CPU/GPU mem setup
+	void setup(uint, uint); // CPU/GPU mem setup
 	void graphConstruction(uint nnn, uint nne, node *nNeighbours, uint *neWeights, uint *nCumDegs);
 	void randGraph(float, bool, int, std::default_random_engine &); // generate an Erdos random graph
 	void print(bool);
@@ -139,7 +146,7 @@ public:
 	GraphStruct *getStruct() { return str; }
 	void memsetGPU(uint, std::string); // use UVA memory on CPU/GPU
 	void deallocGPU();
-	bool isConnected() {return connected;};
+	bool isConnected() { return connected; };
 };
 
 #endif
