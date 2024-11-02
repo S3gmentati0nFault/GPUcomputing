@@ -33,6 +33,15 @@ void Graph::memsetGPU(uint nn, string memType)
   }
 }
 
+void Graph::memsetGPU(uint nn, uint ne)
+{
+  CHECK(cudaMallocManaged(&str, sizeof(GraphStruct)));
+  CHECK(cudaMallocManaged(&(str->cumDegs), (nn + 1) * sizeof(node)));
+  CHECK(cudaMallocManaged(&(str->outdegrees), nn * sizeof(node)));
+  CHECK(cudaMallocManaged(&(str->neighs), ne * sizeof(node)));
+  CHECK(cudaMallocManaged(&(str->weights), ne * sizeof(int)));
+}
+
 /**
  * Print the graph on device (verbose = 1 for "verbose print")
  * @param verbose print the complete graph

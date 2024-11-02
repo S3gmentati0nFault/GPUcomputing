@@ -53,8 +53,7 @@ void Graph::setup(uint nn, uint ne)
 {
 	if (GPUEnabled)
 	{
-		memsetGPU(nn, string("nodes"));
-		memsetGPU(ne, string("edges"));
+		memsetGPU(nn, ne);
 	}
 	else
 	{

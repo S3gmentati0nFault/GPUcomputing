@@ -145,6 +145,7 @@ public:
 	void print_d(GraphStruct *, bool);
 	GraphStruct *getStruct() { return str; }
 	void memsetGPU(uint, std::string); // use UVA memory on CPU/GPU
+	void memsetGPU(uint, uint);		   // use UVA memory on CPU/GPU
 	void deallocGPU();
 	bool isConnected() { return connected; };
 };
