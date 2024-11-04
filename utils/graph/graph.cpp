@@ -44,7 +44,6 @@ void Graph::setup(uint nn)
 	{
 		str = new GraphStruct();
 		str->cumDegs = new node[nn + 1]{}; // starts by zero
-		str->outdegrees = new uint[nn]{};
 	}
 	str->nodeSize = nn;
 }
@@ -59,7 +58,6 @@ void Graph::setup(uint nn, uint ne)
 	{
 		str = new GraphStruct();
 		str->cumDegs = new node[nn + 1]{}; // starts by zero
-		str->outdegrees = new uint[nn]{};
 		str->neighs = new uint[ne]{};
 		str->weights = new int[ne]{};
 	}
@@ -113,7 +111,6 @@ void Graph::randGraph(float prob, bool weighted, int weight_limit, std::default_
 	for (node i = 0; i < n; i++)
 	{
 		str->cumDegs[i + 1] += str->cumDegs[i];
-		str->outdegrees[i] = str->cumDegs[i + 1] - str->cumDegs[i];
 	}
 
 	// max, min, mean deg

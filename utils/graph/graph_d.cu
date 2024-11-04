@@ -10,7 +10,6 @@ void Graph::deallocGPU()
   CHECK(cudaFree(str->neighs));
   CHECK(cudaFree(str->weights));
   CHECK(cudaFree(str->cumDegs));
-  CHECK(cudaFree(str->outdegrees));
   CHECK(cudaFree(str));
 }
 
@@ -24,7 +23,6 @@ void Graph::memsetGPU(uint nn, string memType)
   {
     CHECK(cudaMallocManaged(&str, sizeof(GraphStruct)));
     CHECK(cudaMallocManaged(&(str->cumDegs), (nn + 1) * sizeof(node)));
-    CHECK(cudaMallocManaged(&(str->outdegrees), nn * sizeof(node)));
   }
   else if (!memType.compare("edges"))
   {
@@ -37,7 +35,6 @@ void Graph::memsetGPU(uint nn, uint ne)
 {
   CHECK(cudaMallocManaged(&str, sizeof(GraphStruct)));
   CHECK(cudaMallocManaged(&(str->cumDegs), (nn + 1) * sizeof(node)));
-  CHECK(cudaMallocManaged(&(str->outdegrees), nn * sizeof(node)));
   CHECK(cudaMallocManaged(&(str->neighs), ne * sizeof(node)));
   CHECK(cudaMallocManaged(&(str->weights), ne * sizeof(int)));
 }
